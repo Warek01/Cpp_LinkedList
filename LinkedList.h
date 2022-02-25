@@ -1,9 +1,10 @@
 // Seminar work on linked lists
 // Variable is being created as LinkedList<vartype>
-// May have problems with swapping (unsufficient time for debugging)
 
 #pragma once
-#include <iostream>
+
+#include <cassert>
+#include <ostream>
 
 template <typename T>
 class LinkedList
@@ -27,50 +28,27 @@ private:
 	/* Return node by index */
 	Node* m_getIndex(int index)
 	{
-		if (index < -1 || index > m_size - 1) throw std::invalid_argument("Invalid index");
-		else if (index == -1) return m_lastNode;
-		else
-		{
-			Node* node = m_firstNode;
+		assert(index > -1 || index < m_size - 1 && "Invalid index");
+		if (index == -1) return m_lastNode;
 
-			for (int i = 0; i < index; i++)
-				node = node->next;
+		Node* node = m_firstNode;
 
-			return node;
-		}
+		for (int i = 0; i < index; i++)
+			node = node->next;
+
+		return node;
+
 	}
 
 	void m_swap(Node* a, Node* b)
 	{
-		if (m_firstNode == a) m_firstNode = b;
-		else if (m_firstNode == b) m_firstNode = a;
-		else if (m_lastNode == a) m_lastNode = b;
-		else if (m_lastNode == b) m_lastNode = a;
-
-		Node* n = a->next,
-			* p = a->prev;
-
-		a->next = b->next;
-		if (a->next == b || b->prev == a)
-		{
-			b->next = a;
-			a->prev = b;
-		}
-		else
-		{
-			a->prev = b->prev;
-			b->next = n;
-		}
-		b->prev = p;
+		T temp = a->data;
+		a->data = b->data;
+		b->data = temp;
 	}
 
 public:
-	/////////////////////////////////////////////////
-	// Constructors
 	LinkedList() { }
-
-	/////////////////////////////////////////////////
-	// Destructor
 	~LinkedList() { empty(); }
 
 	/////////////////////////////////////////////////
@@ -160,13 +138,13 @@ public:
 	/* First element */
 	T getFirst()
 	{
-		return m_firstNode ? m_firstNode->data : NULL;
+		return m_firstNode;;
 	}
 
 	/* Last element */
 	T getLast()
 	{
-		return m_lastNode ? m_lastNode->data : NULL;
+		return m_lastNode;
 	}
 
 	/* Size of list */
@@ -208,9 +186,10 @@ public:
 		return *this;
 	}
 
+	/* Swap 2 elements */
 	LinkedList<T>& swap(int i, int j)
 	{
-		if (i < 0 || j < 0 || i > size() - 1 || j > size() - 1) throw std::invalid_argument("Wrong index");
+		assert(i > 0 || j > 0 || i < size() - 1 || j < size() - 1 && "Index out of bounds");
 
 		m_swap(m_getIndex(i), m_getIndex(j));
 
